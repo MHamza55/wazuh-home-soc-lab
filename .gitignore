@@ -1,0 +1,19 @@
+# Never commit credentials or secrets
+*.key
+*.pem
+*secret*
+*password*
+*.env
+credentials*
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Large/local artifacts
+*.ova
+*.vdi
+*.iso
