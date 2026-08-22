@@ -4,9 +4,9 @@ Real problems encountered while building the lab, and how each was resolved.
 This log is deliberately kept — diagnosing and fixing these is where most of the
 actual learning happened.
 
----
+\---
 
-## 1. Wazuh manager fails to start — `systemd` timeout
+## 1\. Wazuh manager fails to start — `systemd` timeout
 
 **Symptom:** `Job for wazuh-manager.service failed because a timeout was exceeded.`
 `wazuh-control status` showed `analysisd`, `remoted`, `db` running but
@@ -21,17 +21,17 @@ systemd drop-in raised the timeout permanently:
 ```bash
 sudo /var/ossec/bin/wazuh-control restart
 sudo mkdir -p /etc/systemd/system/wazuh-manager.service.d
-printf '[Service]\nTimeoutStartSec=600\n' | sudo tee /etc/systemd/system/wazuh-manager.service.d/override.conf
+printf '\\\[Service]\\\\nTimeoutStartSec=600\\\\n' | sudo tee /etc/systemd/system/wazuh-manager.service.d/override.conf
 sudo systemctl daemon-reload
 # verify: systemctl show wazuh-manager -p TimeoutStartUSec  ->  10min
 ```
 
 > Note: on a single-node install, `clusterd`, `maild`, `agentlessd`, `integratord`,
-> `dbd`, and `csyslogd` are **expected** to be stopped — they aren't configured.
+> `dbd`, and `csyslogd` are \\\*\\\*expected\\\*\\\* to be stopped — they aren't configured.
 
----
+\---
 
-## 2. Dashboard: "Something went wrong / timeout of 20000ms exceeded"
+## 2\. Dashboard: "Something went wrong / timeout of 20000ms exceeded"
 
 **Symptom:** dashboard loaded but threw a timeout error after the VM had just booted.
 
@@ -43,12 +43,12 @@ by host CPU contention when both VMs ran at once.
 
 ```bash
 sudo /var/ossec/bin/wazuh-control status
-curl -k -u admin https://127.0.0.1:9200/_cluster/health?pretty   # indexer
+curl -k -u admin https://127.0.0.1:9200/\\\_cluster/health?pretty   # indexer
 ```
 
----
+\---
 
-## 3. Default credentials — partial rotation
+## 3\. Default credentials — partial rotation
 
 **Finding:** the password tool rotated the indexer/dashboard users but printed
 `Wazuh API admin credentials not provided, Wazuh API passwords not changed` —
@@ -64,13 +64,13 @@ sudo systemctl restart wazuh-indexer wazuh-dashboard filebeat wazuh-manager
 Documenting "identified and remediated default credentials" is itself a valid
 security finding.
 
----
+\---
 
-## 4. Attack from Wazuh server blocked by FIPS mode
+## 4\. Attack from Wazuh server blocked by FIPS mode
 
 **Symptom:** running the SSH brute-force loop from the Wazuh server failed
 immediately with:
-`kex_gen_client: Key exchange type c25519 is not allowed in FIPS mode`.
+`kex\\\_gen\\\_client: Key exchange type c25519 is not allowed in FIPS mode`.
 
 **Cause:** the Wazuh appliance's SSH client runs in FIPS mode and refuses the
 modern curve25519 key exchange, so the connection never reached the target — no
@@ -79,9 +79,9 @@ authentication attempt was generated.
 **Fix:** launch the attack from a non-FIPS host (the Ubuntu endpoint). Detections
 appeared immediately afterward.
 
----
+\---
 
-## 5. Agent name typo
+## 5\. Agent name typo
 
 **Symptom:** agent enrolled as `ubuntu-targer` instead of `ubuntu-target`.
 
@@ -96,14 +96,14 @@ sudo /var/ossec/bin/agent-auth -m 10.0.5.3 -A ubuntu-target
 sudo systemctl start wazuh-agent
 
 # on the manager
-sudo /var/ossec/bin/manage_agents   # (R)emove the old ID, then (Q)uit
+sudo /var/ossec/bin/manage\\\_agents   # (R)emove the old ID, then (Q)uit
 ```
 
 The agent reappeared cleanly as `ubuntu-target` (ID 002).
 
----
+\---
 
-## 6. DHCP address drift
+## 6\. DHCP address drift
 
 **Observation:** both VMs use DHCP on `lab-net`, so addresses can change across
 reboots. If the dashboard or SSH forwards stop working, re-check with `ip a` and
@@ -112,9 +112,9 @@ update the port-forwarding **Guest IP** values accordingly.
 **Improvement (planned):** assign the Wazuh server a static address so the lab is
 fully reproducible without editing forwards.
 
----
+\---
 
-## 7. VirtualBox soft lockups (`watchdog: BUG: soft lockup`)
+## 7\. VirtualBox soft lockups (`watchdog: BUG: soft lockup`)
 
 **Symptom:** during Ubuntu install, `CPU stuck for 23s` watchdog messages.
 
@@ -124,3 +124,4 @@ the Ubuntu VM simultaneously on a constrained host.
 **Mitigations:** don't run both VMs during heavy installs; keep only what's needed
 running; on Windows, disabling Hyper-V-based features (Core Isolation / Memory
 Integrity, WSL2, Docker Desktop) removes VirtualBox's degraded execution mode.
+
