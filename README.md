@@ -6,9 +6,11 @@ against them, and the resulting detections are analysed in the dashboard and
 mapped to the **MITRE ATT&CK** framework and **PCI DSS** controls — including a
 **custom detection rule authored from scratch**.
 
-This repository documents the build, the detections, and the troubleshooting
-involved in getting it working — the goal being to demonstrate hands-on SOC
-analyst and detection-engineering skills, not just to follow a tutorial.
+I built this in my final year at university, right after passing the CompTIA
+Security+ exam. I wanted proper hands-on blue-team practice rather than just
+theory, so I set the whole thing up, broke it a few times, and fixed it myself.
+This repo documents the build, the detections, and the troubleshooting along the
+way.
 
 ---
 
